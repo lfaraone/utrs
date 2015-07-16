@@ -1,5 +1,4 @@
 <?php
-//Created by the unblock-en-l dev team (test commit)
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
@@ -76,8 +75,8 @@ if(isset($_POST["submit"])){
          }
          throw new UTRSCredentialsException($message);
       }
-      if ($registered && !Appeal::verifyBlock($wikiAccount, TRUE)) {
-        throw new UTRSValidationException('The username you entered ('.$wikiAccount.') is not currently blocked. Please verify that you are blocked by following the instructions above.');
+      if ($registered && (!Appeal::verifyBlock($wikiAccount, TRUE) || !Appeal::verifyBlock($ip, FALSE))) {
+        throw new UTRSValidationException('The username you entered ('.$wikiAccount.') nor your IP Address ('.$ip.') is not currently blocked. Please verify that you are blocked by following the instructions above.');
       }
       elseif (!$registered && !Appeal::verifyBlock($ip, FALSE)) {
         throw new UTRSValidationException('Your IP Address ('.$ip.') is not currently blocked. If you have an account, please select \'Yes\' to "Do you have an account on Wikipedia?".');
@@ -139,7 +138,7 @@ if(isset($_POST["submit"])){
 
 skinHeader("var accountNameInput = \"<label id=\\\"accountNameLabel\\\" for=\\\"accountName\\\" class=\\\"required\\\">What is the name of your account?</label> <input id=\\\"accountName\\\" type=\\\"text\\\" name=\\\"appeal_wikiAccountName\\\" value=\\\"" . posted('appeal_wikiAccountName') . "\\\"/><br />\";
 var autoBlockInput = \"<label id=\\\"autoBlockLabel\\\" for=\\\"autoBlock\\\" class=\\\"required\\\">What has been blocked?</label> &#09; <input id=\\\"autoBlockN\\\" type=\\\"radio\\\" name=\\\"appeal_autoblock\\\" value=\\\"0\\\" " . ($hasAccount ? ($autoBlock ? "" : "checked=\\\"checked\\\"") : "") . " /> My account &#09; <input id=\\\"autoBlockY\\\" type=\\\"radio\\\" name=\\\"appeal_autoblock\\\" value=\\\"1\\\" " . ($hasAccount ? ($autoBlock ? "checked=\\\"checked\\\"" : "") : "") . " /> My IP address or range (my account is not blocked)<br />\";
-var desiredAccountInput = \"<label id=\\\"accountNameLabel\\\" for=\\\"accountName\\\">We may be able to create an account for you which you can use to avoid problems like this in the future. If you would like for us to make an account for you, please enter the username you'd like to use here.</label><br/><input id=\\\"accountName\\\" type=\\\"text\\\" name=\\\"appeal_wikiAccountName\\\" value=\\\"" . posted('appeal_wikiAccountName') . "\\\"/><br />\";
+var desiredAccountInput = \"<label id=\\\"accountNameLabel\\\" for=\\\"accountName\\\">If you would like for us to make an account for you so that you can avoid the IP block, please visit <a href=\\\"//accounts.wmflabs.org/\\\">the account creation tool</a>. DO NOT submit an appeal here if that is the case.</label><br />\";
 var registered = " . ($hasAccount ? "true" : "false") . ";
 
 function hasAccount(){
